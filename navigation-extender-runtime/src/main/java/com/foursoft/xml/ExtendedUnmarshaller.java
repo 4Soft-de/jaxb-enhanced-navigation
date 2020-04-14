@@ -71,7 +71,7 @@ public class ExtendedUnmarshaller<R, I> {
         this.rootElement = rootElement;
         final String packageName = rootElement.getPackage()
                 .getName();
-        final JAXBContext context = JAXBContext.newInstance(packageName);
+        final JAXBContext context = JAXBContextFactory.initializeContext(packageName);
         postProcessorRegistry = new ModelPostProcessorRegistry(packageName);
         unmarshaller = context.createUnmarshaller();
     }
@@ -162,10 +162,17 @@ public class ExtendedUnmarshaller<R, I> {
         return new JaxbModel<>(root, idLookupProvider.orElse(null));
     }
 
+    /**
+     * Provides access to the internal jax-b unmarshaller for further configuration. Use with caution.
+     * @return the internal jax-b unmarshaller
+     */
+    public Unmarshaller getUnmarshaller() {
+        return unmarshaller;
+    }
+
     private void cleanUp() {
         // Allow garbage collection.
         unmarshaller.setListener(null);
-
         postProcessorRegistry.clearStateOfPostProcessors();
     }
 

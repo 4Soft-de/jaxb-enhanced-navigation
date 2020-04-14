@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.foursoft.jaxb2</groupId>
     <artifactId>navigation-extender-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A lib for enhanced navigations for JAXB models. It consists of two parts: An xjc-plugin (compile time)
@@ -134,7 +134,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -233,7 +233,7 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                     <plugin>
