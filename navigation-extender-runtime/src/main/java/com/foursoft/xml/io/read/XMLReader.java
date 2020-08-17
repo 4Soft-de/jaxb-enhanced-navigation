@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.ValidationEvent;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -106,7 +105,7 @@ public class XMLReader<T, I> {
         if (!Files.isReadable(path)) {
             throw new XMLIOException("Given path: " + path + " isn't readable.");
         }
-        try (final InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
+        try (final InputStream is = Files.newInputStream(path)) {
             return read(is);
         } catch (final IOException e) {
             throw new XMLIOException("Error reading file " + filename, e);

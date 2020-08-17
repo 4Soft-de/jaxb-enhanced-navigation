@@ -35,13 +35,17 @@ import java.util.Optional;
  * and added directly before the xml-element.
  * e.g. if a Root-class exists which is serialized to &lt;Root&gt;&lt;/Root&gt;
  * the following code:
+ * <pre>{@code
  * Root root = new Root();
  * Comments comments = new Comments();
  * comments.put(root, "TestComment");
  * XMLWriter::write(root, comments);
  * would result in:
- * &lt;!-- TestComment --&gt;
- * &lt;Root&gt;&lt;/Root&gt;
+ * <-- TestComment -->
+ * <Root>
+ *     ...
+ * </Root>
+ * }</pre>
  */
 public class Comments {
     private final Map<Object, String> map = new HashMap<>();

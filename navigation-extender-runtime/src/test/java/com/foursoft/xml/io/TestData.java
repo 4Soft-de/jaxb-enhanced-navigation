@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 public final class TestData {
     public static final String BASIC_TEST_XML = "basic-test.xml";
     public static final String ERROR_TEST_XML = "error-test.xml";
+    public static final String MERROR_TEST_XML = "multiple-error-test.xml";
     public static final Path BASIC_BASE_PATH = Paths.get("src", "test", "resources", "basic");
     public static final Path VALIDATE_BASE_PATH = Paths.get("src", "test", "resources", "validate");
 
