@@ -40,7 +40,9 @@ import java.util.Optional;
  * Comments comments = new Comments();
  * comments.put(root, "TestComment");
  * XMLWriter::write(root, comments);
+ * }</pre>
  * would result in:
+ * <pre>{@code
  * <-- TestComment -->
  * <Root>
  *     ...
