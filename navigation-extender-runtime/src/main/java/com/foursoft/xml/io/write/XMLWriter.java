@@ -42,7 +42,8 @@ import java.util.function.Consumer;
  */
 public class XMLWriter<T> {
 
-    public static final String NAMESPACE_PREFIX_MAPPER = "com.sun.xml.bind.namespacePrefixMapper";
+    private static final String NAMESPACE_PREFIX_MAPPER = "com.sun.xml.bind.namespacePrefixMapper";
+
     private final Class<T> baseType;
     private final Marshaller marshaller;
 
