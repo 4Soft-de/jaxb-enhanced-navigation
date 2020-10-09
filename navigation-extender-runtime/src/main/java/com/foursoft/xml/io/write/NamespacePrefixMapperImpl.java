@@ -65,7 +65,6 @@ package com.foursoft.xml.io.write;
  * holder.
  */
 
-//import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 
@@ -123,55 +122,4 @@ class NamespacePrefixMapperImpl extends NamespacePrefixMapper {
         return suggestion;
     }
 
-
-
-    /**
-     * Returns a list of namespace URIs that should be declared
-     * at the root element.
-     * <p>
-     * By default, the JAXB RI produces namespace declarations only when
-     * they are necessary, only at where they are used. Because of this
-     * lack of look-ahead, sometimes the marshaller produces a lot of
-     * namespace declarations that look redundant to human eyes. For example,
-     * <pre><xmp>
-     * <?xml version="1.0"?>
-     * <root>
-     *   <ns1:child xmlns:ns1="urn:foo"> ... </ns1:child>
-     *   <ns2:child xmlns:ns2="urn:foo"> ... </ns2:child>
-     *   <ns3:child xmlns:ns3="urn:foo"> ... </ns3:child>
-     *   ...
-     * </root>
-     * <xmp></pre>
-     * <p>
-     * If you know in advance that you are going to use a certain set of
-     * namespace URIs, you can override this method and have the marshaller
-     * declare those namespace URIs at the root element.
-     * <p>
-     * For example, by returning <code>new String[]{"urn:foo"}</code>,
-     * the marshaller will produce:
-     * <pre><xmp>
-     * <?xml version="1.0"?>
-     * <root xmlns:ns1="urn:foo">
-     *   <ns1:child> ... </ns1:child>
-     *   <ns1:child> ... </ns1:child>
-     *   <ns1:child> ... </ns1:child>
-     *   ...
-     * </root>
-     * <xmp></pre>
-     * <p>
-     * To control prefixes assigned to those namespace URIs, use the
-     * {@link #getPreferredPrefix} method.
-     *
-     * @return
-     *      A list of namespace URIs as an array of {@link String}s.
-     *      This method can return a length-zero array but not null.
-     *      None of the array component can be null. To represent
-     *      the empty namespace, use the empty string <code>""</code>.
-     *
-     * @since
-     *      JAXB RI 1.0.2
-     */
-    public String[] getPreDeclaredNamespaceUris() {
-        return new String[] { "urn:abc", "urn:def" };
-    }
 }
