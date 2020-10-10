@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.foursoft.jaxb2</groupId>
     <artifactId>navigation-extender-parent</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A lib for enhanced navigation for JAXB models.
@@ -41,6 +41,11 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 
+        <!-- build & release properties -->
+        <sonar.projectKey>4Soft-de_jaxb-enhanced-navigation</sonar.projectKey>
+        <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
+        <sonar.organization>4soft-de</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <inceptionYear>2019</inceptionYear>
@@ -58,8 +63,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:4Soft-de/jaxb-enhanced-navigation.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:4Soft-de/jaxb-enhanced-navigation.git</developerConnection>
+        <connection>scm:git:https://github.com/4Soft-de/jaxb-enhanced-navigation.git</connection>
+        <developerConnection>scm:git:https://git@github.com/4Soft-de/jaxb-enhanced-navigation.git</developerConnection>
         <url>https://github.com/4Soft-de/jaxb-enhanced-navigation/tree/master</url>
     </scm>
 
@@ -106,6 +111,17 @@
                 <artifactId>jaxb-core</artifactId>
                 <scope>provided</scope>
                 <version>${jaxb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2.11</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>2.2.11</version>
             </dependency>
 
             <!--test-->
@@ -166,9 +182,10 @@
                     <artifactId>gitflow-maven-plugin</artifactId>
                     <version>${gitflow-maven-plugin.version}</version>
                     <configuration>
-                        <argLine>-DskipTests</argLine>
+                        <argLine>-DskipTests -P release -s .mvn/release.settings.xml </argLine>
                         <installProject>true</installProject>
                         <skipTestProject>true</skipTestProject>
+                        <postReleaseGoals>deploy</postReleaseGoals>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -304,6 +321,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
