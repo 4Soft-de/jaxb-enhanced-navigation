@@ -1,6 +1,7 @@
 ---
 name: Feature Request
 about: Want to request a new feature for our XML navigator?
+labels: "enhancement"
 ---
 
 ## General Troubleshooting
