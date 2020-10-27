@@ -28,39 +28,61 @@ package com.foursoft.xml.io.validation;
 import com.foursoft.xml.io.validation.LogValidator.ErrorLocation;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
+
+import static com.foursoft.xml.io.validation.LogErrors.*;
 
 /**
  * helper class to log  {@link ErrorLocation}
- * It will prefix the incorrect lines with "ERROR" and add the error messages
+ * It will prefix the incorrect lines with "ERROR" and add the error messages, also it will truncate all
+ * valid lines.  Output for 3 surrounding lines would be e.g.:
+ * <pre>{@code
+ * ...
+ * 12:           <ChildB id="id_6">
+ * 13:               <xyz>another value</xyz>
+ * 14:           </ChildB>
+ * 15: ERROR     <ChildB id="id_6"> cvc-id.2: ID-Wert 'id_6' kommt mehrmals vor./cvc-attribute.3: Wert 'id_6' des
+ * Attributs 'id' bei Element 'ChildB' hat keinen gültigen Typ 'ID'.
+ * 16:               <xyz>value</xyz>
+ * 17:           </ChildB>
+ * 18:           <ChildB id="id_71">
+ * ...
+ * }</pre>
  */
-public final class LogErrors {
+public final class ScopedLogErrors {
 
-    static final Pattern LINE_SPLIT_PATTERN = Pattern.compile("\\r?\\n");
-
-    private LogErrors() {
+    private ScopedLogErrors() {
 
     }
 
     /**
      * adds all error messages to the xml content
      *
-     * @param xmlContent the xml content containing errors
-     * @param errorLines the detected errors
+     * @param xmlContent           the xml content containing errors
+     * @param errorLines           the detected errors
+     * @param numberOfContextLines number of valid lines printed before+after the incorrect line
      * @return the annotated xml content
      */
     public static String annotateXMLContent(final String xmlContent,
-                                            final Collection<ErrorLocation> errorLines) {
+                                            final Collection<ErrorLocation> errorLines,
+                                            final int numberOfContextLines) {
         if (errorLines.isEmpty()) {
-            return xmlContent;
+            return "";
         }
         final Map<Integer, String> errorMap = prepareErrors(errorLines);
 
         final String[] lines = LINE_SPLIT_PATTERN.split(xmlContent);
         final StringBuilder output = new StringBuilder(xmlContent.length() * 2);
+        boolean inSeparatorMode = true;
         for (int i = 1; i <= lines.length; i++) {
+            if (!isInScopeOfError(i, errorMap, numberOfContextLines)) {
+                if (inSeparatorMode) {
+                    addErrorSeparator(output);
+                    inSeparatorMode = false;
+                }
+                continue;
+            }
+            inSeparatorMode = true;
             addLineNumber(output, i);
             if (errorMap.containsKey(i)) {
                 addErrorLine(output, lines[i - 1], errorMap.get(i));
@@ -72,43 +94,19 @@ public final class LogErrors {
 
     }
 
-    static void addNormalLine(final StringBuilder output, final String line) {
-        output.append("      ");
-        output.append(line);
+    private static void addErrorSeparator(final StringBuilder output) {
+        output.append("...");
         addNewLine(output);
     }
 
-    static void addNewLine(final StringBuilder output) {
-        output.append('\n');
-    }
-
-    static void addLineNumber(final StringBuilder output, final int i) {
-        output.append(i);
-        output.append(": ");
-    }
-
-    static void addErrorLine(final StringBuilder output,
-                             final String line,
-                             final String error) {
-        output.append("ERROR ");
-        output.append(line);
-        output.append(' ');
-        output.append(error);
-        addNewLine(output);
-    }
-
-    static Map<Integer, String> prepareErrors(final Collection<ErrorLocation> errorLines) {
-        final Map<Integer, String> errorMap = new HashMap<>();
-
-        for (final ErrorLocation errorLine : errorLines) {
-            final int line = errorLine.line;
-            final String error = errorLine.message;
-            if (errorMap.containsKey(line)) {
-                errorMap.put(line, errorMap.get(line) + "/" + error);
-            } else {
-                errorMap.put(line, error);
+    private static boolean isInScopeOfError(final int pos,
+                                            final Map<Integer, String> errorMap,
+                                            final int numberOfContextLines) {
+        for (int i = -numberOfContextLines; i <= numberOfContextLines; i++) {
+            if (errorMap.containsKey(pos + i)) {
+                return true;
             }
         }
-        return errorMap;
+        return false;
     }
 }

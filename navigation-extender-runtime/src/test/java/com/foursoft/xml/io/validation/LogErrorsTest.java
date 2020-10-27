@@ -51,4 +51,20 @@ class LogErrorsTest {
         // line 21 contains a duplicate key
         assertThat(errorString).contains("21: ERROR     <ChildB id=\"id_8\">");
     }
+
+    @Test
+    void logScopedErrors() throws Exception {
+        final XMLValidation xmlValidation = getXmlValidation();
+
+        final String content = new String(
+                Files.readAllBytes(TestData.VALIDATE_BASE_PATH.resolve(TestData.MERROR_TEST_XML)));
+
+        final Collection<ErrorLocation> errors = xmlValidation.validateXML(content,
+                                                                           StandardCharsets.UTF_8);
+        final String errorString = ScopedLogErrors.annotateXMLContent(content, errors, 3);
+        assertThat(errorString).contains("15: ERROR");
+        assertThat(errorString).contains("30: ERROR");
+        assertThat(errorString).contains("...");
+    }
+
 }
