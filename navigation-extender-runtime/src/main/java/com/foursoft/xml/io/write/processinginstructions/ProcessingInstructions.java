@@ -23,39 +23,28 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write;
+package com.foursoft.xml.io.write.processinginstructions;
 
-import com.foursoft.xml.io.write.comments.Comments;
-import org.junit.jupiter.api.Test;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class ProcessingInstructions {
 
-class CommentsTest {
+    private final Map<Object, String> map = new HashMap<>();
 
-    @Test
-    void containsKey() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        assertTrue(comments.containsKey("a"));
-        assertFalse(comments.containsKey("b"));
+    public boolean containsKey(final Object key) {
+        return map.containsKey(key);
     }
 
-    @Test
-    void get() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        final Optional<String> actual = comments.get("a");
-        assertTrue(actual.isPresent());
-        assertEquals("b", actual.get());
+    public Optional<String> get(final Object key) {
+        return Optional.ofNullable(map.get(key));
     }
 
-    @Test
-    void getMissing() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        final Optional<String> actual = comments.get("b");
-        assertFalse(actual.isPresent());
+    public void put(final Object key, final String comment) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(comment);
+        map.put(key, comment);
     }
 }

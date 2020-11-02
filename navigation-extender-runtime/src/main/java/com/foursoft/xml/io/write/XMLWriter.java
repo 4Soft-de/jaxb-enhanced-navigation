@@ -28,6 +28,11 @@ package com.foursoft.xml.io.write;
 import com.foursoft.xml.JaxbContextFactory;
 import com.foursoft.xml.io.utils.ValidationEventLogger;
 import com.foursoft.xml.io.utils.XMLIOException;
+import com.foursoft.xml.io.write.comments.CommentAdderListener;
+import com.foursoft.xml.io.write.comments.CommentAwareXMLStreamWriter;
+import com.foursoft.xml.io.write.comments.Comments;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructionAdderListener;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import javax.xml.bind.*;
 import javax.xml.stream.XMLOutputFactory;
@@ -83,10 +88,25 @@ public class XMLWriter<T> {
      *
      * @param container    the jaxb model to deserialize into the given stream
      * @param outputStream the output to write to
+     * @param meta     additional meta information which should be added to output {@link Meta}
+     */
+    @Deprecated
+    public void write(final T container, final Meta meta, final OutputStream outputStream) {
+        write(container, meta, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+    }
+
+    /**
+     * write the JAXB model to an output stream
+     *
+     * @param container    the jaxb model to deserialize into the given stream
+     * @param outputStream the output to write to
      * @param comments     additional comments which should be added to output {@link Comments}
      */
+    @Deprecated
     public void write(final T container, final Comments comments, final OutputStream outputStream) {
-        write(container, comments, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        final Meta meta = new Meta();
+        meta.setComments(comments);
+        write(container, meta, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
 
     /**
@@ -96,9 +116,12 @@ public class XMLWriter<T> {
      * @param comments  additional comments which should be added to output {@link Comments}
      * @return the model as xml string
      */
+    @Deprecated
     public String writeToString(final T container, final Comments comments) {
+        final Meta meta = new Meta();
+        meta.setComments(comments);
         try (final StringWriter stringWriter = new StringWriter()) {
-            write(container, comments, stringWriter);
+            write(container, meta, stringWriter);
             return stringWriter.toString();
         } catch (final Exception e) {
             throw new XMLIOException("Error serializing objects to XML.", e);
@@ -131,11 +154,14 @@ public class XMLWriter<T> {
 
     }
 
-    private void write(final T container, final Comments comments, final Writer output) {
+    private void write(final T container, final Meta meta, final Writer output) {
         final XMLOutputFactory xof = XMLOutputFactory.newFactory();
         try {
             final CommentAwareXMLStreamWriter xsw = new CommentAwareXMLStreamWriter(xof.createXMLStreamWriter(output));
-            marshaller.setListener(new CommentAdderListener(xsw, comments));
+            meta.getComments().ifPresent(c -> marshaller.setListener(new CommentAdderListener(xsw, c)));
+            final IndentingXMLStreamWriter indentingXMLStreamWriter = new IndentingXMLStreamWriter(xof.createXMLStreamWriter(output));
+            meta.getProcessingInstructions().ifPresent(c -> marshaller.setListener(new ProcessingInstructionAdderListener(indentingXMLStreamWriter, c)));
+
             marshaller.marshal(container, xsw);
             xsw.close();
         } catch (final XMLStreamException | JAXBException e) {

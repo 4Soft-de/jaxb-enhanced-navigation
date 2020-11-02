@@ -1,4 +1,4 @@
-/*-
+package com.foursoft.xml.io.write.processinginstructions;/*-
  * ========================LICENSE_START=================================
  * navigation-extender-runtime
  * %%
@@ -23,24 +23,38 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.Marshaller.Listener;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.util.Optional;
 
-/**
- * with comments the formatting doesn't work, this adds the formatting back.
- */
-public class CommentAwareXMLStreamWriter extends com.sun.xml.txw2.output.IndentingXMLStreamWriter {
+public class ProcessingInstructionAdderListener extends Listener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessingInstructionAdderListener.class);
+    private final XMLStreamWriter xsw;
+    private final ProcessingInstructions processingInstructions;
 
-    CommentAwareXMLStreamWriter(final XMLStreamWriter xmlStreamWriter) {
-        super(xmlStreamWriter);
+    /**
+     * @param xsw the xml stream writer
+     * @param processingInstructions map of xjc objects and comment strings
+     */
+    public ProcessingInstructionAdderListener(final XMLStreamWriter xsw, final ProcessingInstructions processingInstructions) {
+        this.xsw = xsw;
+        this.processingInstructions = processingInstructions;
     }
 
     @Override
-    public void writeComment(final String data)
-            throws XMLStreamException {
-        writeCharacters("\n"); // IndentingXMLStreamWriter uses \n
-        super.writeComment(data);
+    public void beforeMarshal(final Object source) {
+        final Optional<String> processingInstruction = processingInstructions.get(source);
+        if (processingInstruction.isPresent()) {
+            try {
+                xsw.writeProcessingInstruction(processingInstruction.get());
+            } catch (final XMLStreamException e) {
+                LOGGER.warn("Ignored Exception while writing processingInstruction:", e);
+            }
+        }
     }
 }

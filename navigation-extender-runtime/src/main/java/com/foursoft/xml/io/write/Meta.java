@@ -25,37 +25,29 @@
  */
 package com.foursoft.xml.io.write;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.foursoft.xml.io.write.comments.Comments;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
 
-import javax.xml.bind.Marshaller.Listener;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Optional;
 
-public class CommentAdderListener extends Listener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentAdderListener.class);
-    private final XMLStreamWriter xsw;
-    private final Comments comments;
+public class Meta {
 
-    /**
-     * @param xsw the xml stream writer
-     * @param comments map of xjc objects and comment strings
-     */
-    public CommentAdderListener(final XMLStreamWriter xsw, final Comments comments) {
-        this.xsw = xsw;
+    private Comments comments;
+    private ProcessingInstructions processingInstructions;
+
+    public Optional<Comments> getComments() {
+        return Optional.ofNullable(comments);
+    }
+
+    public void setComments(Comments comments){
         this.comments = comments;
     }
 
-    @Override
-    public void beforeMarshal(final Object source) {
-        final Optional<String> comment = comments.get(source);
-        if (comment.isPresent()) {
-            try {
-                xsw.writeComment(comment.get());
-            } catch (final XMLStreamException e) {
-                LOGGER.warn("Ignored Exception while writing comments:", e);
-            }
-        }
+    public Optional<ProcessingInstructions> getProcessingInstructions() {
+        return Optional.ofNullable(processingInstructions);
+    }
+
+    public void setProcessingInstructions(ProcessingInstructions processingInstructions) {
+        this.processingInstructions = processingInstructions;
     }
 }

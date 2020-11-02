@@ -30,6 +30,7 @@ import com.foursoft.test.model.ChildB;
 import com.foursoft.test.model.Root;
 import com.foursoft.xml.io.TestData;
 import com.foursoft.xml.io.utils.ValidationEventCollector;
+import com.foursoft.xml.io.write.comments.Comments;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

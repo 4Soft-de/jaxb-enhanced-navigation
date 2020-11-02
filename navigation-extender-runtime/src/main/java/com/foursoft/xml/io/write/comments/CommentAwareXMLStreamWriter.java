@@ -23,39 +23,24 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write;
+package com.foursoft.xml.io.write.comments;
 
-import com.foursoft.xml.io.write.comments.Comments;
-import org.junit.jupiter.api.Test;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
-import java.util.Optional;
+/**
+ * with comments the formatting doesn't work, this adds the formatting back.
+ */
+public class CommentAwareXMLStreamWriter extends com.sun.xml.txw2.output.IndentingXMLStreamWriter {
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class CommentsTest {
-
-    @Test
-    void containsKey() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        assertTrue(comments.containsKey("a"));
-        assertFalse(comments.containsKey("b"));
+    public CommentAwareXMLStreamWriter(final XMLStreamWriter xmlStreamWriter) {
+        super(xmlStreamWriter);
     }
 
-    @Test
-    void get() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        final Optional<String> actual = comments.get("a");
-        assertTrue(actual.isPresent());
-        assertEquals("b", actual.get());
-    }
-
-    @Test
-    void getMissing() {
-        final Comments comments = new Comments();
-        comments.put("a", "b");
-        final Optional<String> actual = comments.get("b");
-        assertFalse(actual.isPresent());
+    @Override
+    public void writeComment(final String data)
+            throws XMLStreamException {
+        writeCharacters("\n"); // IndentingXMLStreamWriter uses \n
+        super.writeComment(data);
     }
 }
