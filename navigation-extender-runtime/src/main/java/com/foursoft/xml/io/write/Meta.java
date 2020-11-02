@@ -26,14 +26,16 @@
 package com.foursoft.xml.io.write;
 
 import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstruction;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Meta {
 
     private Comments comments;
-    private ProcessingInstructions processingInstructions;
+    private List<ProcessingInstruction> processingInstructions;
 
     public Optional<Comments> getComments() {
         return Optional.ofNullable(comments);
@@ -43,11 +45,14 @@ public class Meta {
         this.comments = comments;
     }
 
-    public Optional<ProcessingInstructions> getProcessingInstructions() {
-        return Optional.ofNullable(processingInstructions);
+    public List<ProcessingInstruction> getProcessingInstructions() {
+        if (processingInstructions == null){
+            processingInstructions = new ArrayList<>();
+        }
+        return processingInstructions;
     }
 
-    public void setProcessingInstructions(ProcessingInstructions processingInstructions) {
+    public void setProcessingInstructions(List<ProcessingInstruction> processingInstructions) {
         this.processingInstructions = processingInstructions;
     }
 }

@@ -31,12 +31,13 @@ import com.foursoft.xml.io.utils.XMLIOException;
 import com.foursoft.xml.io.write.comments.CommentAdderListener;
 import com.foursoft.xml.io.write.comments.CommentAwareXMLStreamWriter;
 import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructionAdderListener;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructionAdder;
+import com.sun.xml.internal.fastinfoset.stax.events.ProcessingInstructionEvent;
 
 import javax.xml.bind.*;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
@@ -90,7 +91,6 @@ public class XMLWriter<T> {
      * @param outputStream the output to write to
      * @param meta     additional meta information which should be added to output {@link Meta}
      */
-    @Deprecated
     public void write(final T container, final Meta meta, final OutputStream outputStream) {
         write(container, meta, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
@@ -157,10 +157,12 @@ public class XMLWriter<T> {
     private void write(final T container, final Meta meta, final Writer output) {
         final XMLOutputFactory xof = XMLOutputFactory.newFactory();
         try {
-            final CommentAwareXMLStreamWriter xsw = new CommentAwareXMLStreamWriter(xof.createXMLStreamWriter(output));
+            final XMLStreamWriter xmlStreamWriter = xof.createXMLStreamWriter(output);
+            final ProcessingInstructionAdder processingInstructionAdder = new ProcessingInstructionAdder(xmlStreamWriter, meta.getProcessingInstructions());
+            processingInstructionAdder.beforeMarshal();
+
+            final CommentAwareXMLStreamWriter xsw = new CommentAwareXMLStreamWriter(xmlStreamWriter);
             meta.getComments().ifPresent(c -> marshaller.setListener(new CommentAdderListener(xsw, c)));
-            final IndentingXMLStreamWriter indentingXMLStreamWriter = new IndentingXMLStreamWriter(xof.createXMLStreamWriter(output));
-            meta.getProcessingInstructions().ifPresent(c -> marshaller.setListener(new ProcessingInstructionAdderListener(indentingXMLStreamWriter, c)));
 
             marshaller.marshal(container, xsw);
             xsw.close();

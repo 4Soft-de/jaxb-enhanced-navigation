@@ -28,23 +28,31 @@ package com.foursoft.xml.io.write.processinginstructions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class ProcessingInstructions {
+public class ProcessingInstruction {
 
-    private final Map<Object, String> map = new HashMap<>();
+    private String key;
+    private final Map<String, String> map = new HashMap<>();
 
-    public boolean containsKey(final Object key) {
-        return map.containsKey(key);
+
+    public String getTarget() {
+        return key;
     }
 
-    public Optional<String> get(final Object key) {
-        return Optional.ofNullable(map.get(key));
+    public String getData(){
+        return map.entrySet()
+                        .stream()
+                        .map(d -> String.join("=", d.getKey(), d.getValue()))
+                        .collect(Collectors.joining(" "));
     }
 
-    public void put(final Object key, final String comment) {
+
+    public void put(final String key, final String dataKey, final String data) {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(comment);
-        map.put(key, comment);
+        Objects.requireNonNull(dataKey);
+        Objects.requireNonNull(data);
+        this.key = key;
+        map.put(dataKey, data);
     }
 }

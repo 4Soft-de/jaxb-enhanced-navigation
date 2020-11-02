@@ -27,34 +27,35 @@ package com.foursoft.xml.io.write.processinginstructions;/*-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.Marshaller.Listener;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.util.Optional;
+import java.util.List;
 
-public class ProcessingInstructionAdderListener extends Listener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessingInstructionAdderListener.class);
+public class ProcessingInstructionAdder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessingInstructionAdder.class);
     private final XMLStreamWriter xsw;
-    private final ProcessingInstructions processingInstructions;
+    private final List<ProcessingInstruction> processingInstructions;
 
     /**
      * @param xsw the xml stream writer
-     * @param processingInstructions map of xjc objects and comment strings
+     * @param  processingInstructions list of xjc objects and comment strings
      */
-    public ProcessingInstructionAdderListener(final XMLStreamWriter xsw, final ProcessingInstructions processingInstructions) {
+    public ProcessingInstructionAdder(final XMLStreamWriter xsw, final List<ProcessingInstruction> processingInstructions) {
         this.xsw = xsw;
         this.processingInstructions = processingInstructions;
     }
 
-    @Override
-    public void beforeMarshal(final Object source) {
-        final Optional<String> processingInstruction = processingInstructions.get(source);
-        if (processingInstruction.isPresent()) {
+    public void beforeMarshal() {
+        processingInstructions.forEach(processingInstruction -> {
+            final String target = processingInstruction.getTarget();
+            final String data = processingInstruction.getData();
+
             try {
-                xsw.writeProcessingInstruction(processingInstruction.get());
-            } catch (final XMLStreamException e) {
+                xsw.writeProcessingInstruction(target,data);
+            } catch (XMLStreamException e) {
                 LOGGER.warn("Ignored Exception while writing processingInstruction:", e);
             }
-        }
+        });
     }
+
 }

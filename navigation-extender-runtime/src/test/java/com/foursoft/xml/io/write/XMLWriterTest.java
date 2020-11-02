@@ -31,6 +31,7 @@ import com.foursoft.test.model.Root;
 import com.foursoft.xml.io.TestData;
 import com.foursoft.xml.io.utils.ValidationEventCollector;
 import com.foursoft.xml.io.write.comments.Comments;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstruction;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -105,11 +106,18 @@ class XMLWriterTest {
         final Root root = TestData.readBasicTest();
         final ValidationEventCollector validationEventCollector = new ValidationEventCollector();
         final XMLWriter<Root> xmlWriter = new XMLWriter<>(Root.class, validationEventCollector);
+        final Meta meta = new Meta();
         final Comments comments = new Comments();
+        meta.setComments(comments);
         final String expectedComment = "Blafasel";
         comments.put(root.getChildA().get(0), expectedComment);
+
+        final ProcessingInstruction processingInstructions = new ProcessingInstruction();
+        processingInstructions.put("pc", "checksum", "sum");
+        meta.getProcessingInstructions().add(processingInstructions);
+
         try (final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream()) {
-            xmlWriter.write(root, comments, byteOutputStream);
+            xmlWriter.write(root, meta, byteOutputStream);
             final String result = byteOutputStream.toString();
             assertFalse(validationEventCollector.hasEvents(), "Should produce no errors!");
             Assertions.assertThat(result).contains(expectedComment);
