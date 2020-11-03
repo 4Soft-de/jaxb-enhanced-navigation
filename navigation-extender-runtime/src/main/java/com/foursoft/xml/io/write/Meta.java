@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The meta extends the XML to be written with user-defined processing instructions and comments
+ */
 public class Meta {
 
     private Comments comments;

@@ -30,29 +30,36 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * ProcessingInstruction defines an XML processing instruction
+ */
 public class ProcessingInstruction {
 
-    private String key;
+    private String target;
     private final Map<String, String> map = new HashMap<>();
 
 
     public String getTarget() {
-        return key;
+        return target;
     }
 
     public String getData(){
         return map.entrySet()
                         .stream()
-                        .map(d -> String.join("=", d.getKey(), d.getValue()))
-                        .collect(Collectors.joining(" "));
+                        .map(d -> String.join("=", d.getKey(), "\"" +  d.getValue()) + "\"")
+                        .collect(Collectors.joining( " "));
     }
 
 
-    public void put(final String key, final String dataKey, final String data) {
-        Objects.requireNonNull(key);
+    public void setTarget(String target){
+        this.target = target;
+    }
+
+    public void put(final String target, final String dataKey, final String data) {
+        Objects.requireNonNull(target);
         Objects.requireNonNull(dataKey);
         Objects.requireNonNull(data);
-        this.key = key;
+        this.target = target;
         map.put(dataKey, data);
     }
 }
