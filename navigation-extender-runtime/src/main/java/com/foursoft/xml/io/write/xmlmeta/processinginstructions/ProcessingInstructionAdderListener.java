@@ -1,4 +1,4 @@
-package com.foursoft.xml.io.write.processinginstructions;/*-
+package com.foursoft.xml.io.write.xmlmeta.processinginstructions;/*-
  * ========================LICENSE_START=================================
  * navigation-extender-runtime
  * %%

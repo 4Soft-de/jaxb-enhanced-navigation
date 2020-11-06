@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,39 +23,34 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write.comments;
+package com.foursoft.xml.io.write.xmlmeta;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.foursoft.xml.io.write.xmlmeta.comments.Comments;
+import com.foursoft.xml.io.write.xmlmeta.processinginstructions.ProcessingInstructions;
 
-import javax.xml.bind.Marshaller.Listener;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Optional;
 
-public class CommentAdderListener extends Listener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommentAdderListener.class);
-    private final XMLStreamWriter xsw;
-    private final Comments comments;
+/**
+ * The meta extends the XML to be written with user-defined processing instructions and comments
+ */
+public class XMLMeta {
 
-    /**
-     * @param xsw the xml stream writer
-     * @param comments map of xjc objects and comment strings
-     */
-    public CommentAdderListener(final XMLStreamWriter xsw, final Comments comments) {
-        this.xsw = xsw;
+    private Comments comments;
+    private ProcessingInstructions processingInstructions;
+
+    public Optional<Comments> getComments() {
+        return Optional.ofNullable(comments);
+    }
+
+    public void setComments(final Comments comments) {
         this.comments = comments;
     }
 
-    @Override
-    public void beforeMarshal(final Object source) {
-        final Optional<String> comment = comments.get(source);
-        if (comment.isPresent()) {
-            try {
-                xsw.writeComment(comment.get());
-            } catch (final XMLStreamException e) {
-                LOGGER.warn("Ignored Exception while writing comments:", e);
-            }
-        }
+    public Optional<ProcessingInstructions> getProcessingInstructions() {
+        return Optional.ofNullable(processingInstructions);
+    }
+
+    public void setProcessingInstructions(final ProcessingInstructions processingInstructions) {
+        this.processingInstructions = processingInstructions;
     }
 }

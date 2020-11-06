@@ -30,9 +30,10 @@ import com.foursoft.test.model.ChildB;
 import com.foursoft.test.model.Root;
 import com.foursoft.xml.io.TestData;
 import com.foursoft.xml.io.utils.ValidationEventCollector;
-import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstruction;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
+import com.foursoft.xml.io.write.xmlmeta.XMLMeta;
+import com.foursoft.xml.io.write.xmlmeta.comments.Comments;
+import com.foursoft.xml.io.write.xmlmeta.processinginstructions.ProcessingInstruction;
+import com.foursoft.xml.io.write.xmlmeta.processinginstructions.ProcessingInstructions;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -107,7 +108,7 @@ class XMLWriterTest {
         final Root root = TestData.readBasicTest();
         final ValidationEventCollector validationEventCollector = new ValidationEventCollector();
         final XMLWriter<Root> xmlWriter = new XMLWriter<>(Root.class, validationEventCollector);
-        final Meta meta = new Meta();
+        final XMLMeta meta = new XMLMeta();
         final Comments comments = new Comments();
         meta.setComments(comments);
         final String expectedComment = "Blafasel";
@@ -115,7 +116,7 @@ class XMLWriterTest {
 
         final ProcessingInstructions processingInstructions = new ProcessingInstructions();
         final ProcessingInstruction processingInstruction = new ProcessingInstruction("pc", "\"checksum=sum\"");
-        processingInstructions.put(root.getChildA().get(0), processingInstruction);
+        processingInstructions.put(root, processingInstruction);
         meta.setProcessingInstructions(processingInstructions);
 
         try (final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream()) {

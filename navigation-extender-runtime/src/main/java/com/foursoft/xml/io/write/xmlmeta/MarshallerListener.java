@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,40 +23,39 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write.comments;
+package com.foursoft.xml.io.write.xmlmeta;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import javax.xml.bind.Marshaller.Listener;
+import java.util.*;
 
-/**
- * Comments allows adding XML-comments to the output file. The comments are linked to JAXB elements
- * and added directly before the xml-element.
- * e.g. if a Root-class exists which is serialized to &lt;Root&gt;&lt;/Root&gt;
- * the following code:
- * Root root = new Root();
- * Comments comments = new Comments();
- * comments.put(root, "TestComment");
- * XMLWriter::write(root, comments);
- * would result in:
- * &lt;!-- TestComment --&gt;
- * &lt;Root&gt;&lt;/Root&gt;
- */
-public class Comments {
-    private final Map<Object, String> map = new HashMap<>();
+public class MarshallerListener extends Listener {
 
-    public boolean containsKey(final Object key) {
-        return map.containsKey(key);
+    private final List<Listener> listeners;
+    private final Set<Object> visitObjects = new HashSet<>();
+
+    public MarshallerListener() {
+        listeners = new ArrayList<>();
     }
 
-    public Optional<String> get(final Object key) {
-        return Optional.ofNullable(map.get(key));
+    public MarshallerListener(final Listener... listeners) {
+        this.listeners = Arrays.asList(listeners);
     }
 
-    public void put(final Object key, final String comment) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(comment);
-        map.put(key, comment);
+    public void addListener(final Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void clear() {
+        visitObjects.clear();
+        listeners.clear();
+    }
+
+    @Override
+    public void beforeMarshal(final Object source) {
+        if (visitObjects.contains(source)) {
+            return;
+        }
+        listeners.forEach(c -> c.beforeMarshal(source));
+        visitObjects.add(source);
     }
 }

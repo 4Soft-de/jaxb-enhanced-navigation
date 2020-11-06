@@ -23,34 +23,34 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write;
+package com.foursoft.xml.io.write.xmlmeta.processinginstructions;
 
-import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
-
-import java.util.Optional;
+import java.util.*;
 
 /**
- * The meta extends the XML to be written with user-defined processing instructions and comments
+ * ProcessingInstructions allows adding XML-ProcessingInstructions to the output file. The ProcessingInstructions are linked to JAXB elements
+ * and added directly before the xml-element.
  */
-public class Meta {
+public class ProcessingInstructions {
 
-    private Comments comments;
-    private ProcessingInstructions processingInstructions;
+    private final Map<Object, List<ProcessingInstruction>> map = new HashMap<>();
 
-    public Optional<Comments> getComments() {
-        return Optional.ofNullable(comments);
+    public boolean containsKey(final Object key) {
+        return map.containsKey(key);
     }
 
-    public void setComments(final Comments comments) {
-        this.comments = comments;
+    public List<ProcessingInstruction> get(final Object key) {
+        return map.getOrDefault(key, Collections.emptyList());
     }
 
-    public Optional<ProcessingInstructions> getProcessingInstructions() {
-        return Optional.ofNullable(processingInstructions);
+    public void put(final Object key, final List<ProcessingInstruction> processingInstruction) {
+        Objects.requireNonNull(key);
+        map.put(key, processingInstruction);
     }
 
-    public void setProcessingInstructions(final ProcessingInstructions processingInstructions) {
-        this.processingInstructions = processingInstructions;
+    public void put(final Object key, final ProcessingInstruction... processingInstruction) {
+        Objects.requireNonNull(key);
+        map.put(key, Arrays.asList(processingInstruction));
     }
+
 }

@@ -23,35 +23,25 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write.processinginstructions;
+package com.foursoft.xml.io.write.xmlmeta;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
- * ProcessingInstruction defines an XML processing instruction
+ * with meta the formatting doesn't work, this adds the formatting back.
  */
-public class ProcessingInstruction {
+public class XMLMetaAwareXMLStreamWriter extends com.sun.xml.txw2.output.IndentingXMLStreamWriter {
 
-    private String target;
-    private final String data;
-
-    public ProcessingInstruction(final String target) {
-        this(target, "");
+    public XMLMetaAwareXMLStreamWriter(final XMLStreamWriter xmlStreamWriter) {
+        super(xmlStreamWriter);
     }
 
-    public ProcessingInstruction(final String target, final String data) {
-        this.target = target;
-        this.data = data;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(final String target) {
-        this.target = target;
-    }
-
-    public String getData() {
-        return data;
+    @Override
+    public void writeComment(final String data)
+            throws XMLStreamException {
+        writeCharacters("\n"); // IndentingXMLStreamWriter uses \n
+        super.writeComment(data);
     }
 
 
