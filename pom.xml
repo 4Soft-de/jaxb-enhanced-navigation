@@ -29,9 +29,9 @@
         <!-- Plugins -->
 
         <maven-jaxb2-plugin.version>0.14.0</maven-jaxb2-plugin.version>
-
-
-        <!-- Release Plugins -->
+        
+        <!-- build & release properties -->
+        <sonar.projectKey>4Soft-de_jaxb-enhanced-navigation</sonar.projectKey>
 
     </properties>
 
