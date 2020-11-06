@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,10 +26,8 @@
 package com.foursoft.xml.io.write;
 
 import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstruction;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,24 +36,21 @@ import java.util.Optional;
 public class Meta {
 
     private Comments comments;
-    private List<ProcessingInstruction> processingInstructions;
+    private ProcessingInstructions processingInstructions;
 
     public Optional<Comments> getComments() {
         return Optional.ofNullable(comments);
     }
 
-    public void setComments(Comments comments){
+    public void setComments(final Comments comments) {
         this.comments = comments;
     }
 
-    public List<ProcessingInstruction> getProcessingInstructions() {
-        if (processingInstructions == null){
-            processingInstructions = new ArrayList<>();
-        }
-        return processingInstructions;
+    public Optional<ProcessingInstructions> getProcessingInstructions() {
+        return Optional.ofNullable(processingInstructions);
     }
 
-    public void setProcessingInstructions(List<ProcessingInstruction> processingInstructions) {
+    public void setProcessingInstructions(final ProcessingInstructions processingInstructions) {
         this.processingInstructions = processingInstructions;
     }
 }

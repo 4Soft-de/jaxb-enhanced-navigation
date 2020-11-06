@@ -32,6 +32,7 @@ import com.foursoft.xml.io.TestData;
 import com.foursoft.xml.io.utils.ValidationEventCollector;
 import com.foursoft.xml.io.write.comments.Comments;
 import com.foursoft.xml.io.write.processinginstructions.ProcessingInstruction;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructions;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +85,7 @@ class XMLWriterTest {
 
         final XMLWriter<Root> xmlWriter = new XMLWriter<>(Root.class);
         assertThrows(NullPointerException.class, () -> xmlWriter.writeToString(root),
-                     "Jaxb throws a nullpointer exception if the model is invalid");
+                "Jaxb throws a nullpointer exception if the model is invalid");
 
     }
 
@@ -112,9 +113,10 @@ class XMLWriterTest {
         final String expectedComment = "Blafasel";
         comments.put(root.getChildA().get(0), expectedComment);
 
-        final ProcessingInstruction processingInstructions = new ProcessingInstruction();
-        processingInstructions.put("pc", "checksum", "sum");
-        meta.getProcessingInstructions().add(processingInstructions);
+        final ProcessingInstructions processingInstructions = new ProcessingInstructions();
+        final ProcessingInstruction processingInstruction = new ProcessingInstruction("pc", "\"checksum=sum\"");
+        processingInstructions.put(root.getChildA().get(0), processingInstruction);
+        meta.setProcessingInstructions(processingInstructions);
 
         try (final ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream()) {
             xmlWriter.write(root, meta, byteOutputStream);

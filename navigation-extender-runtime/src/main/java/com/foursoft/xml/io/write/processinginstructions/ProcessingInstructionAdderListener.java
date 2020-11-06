@@ -1,4 +1,4 @@
-/*-
+package com.foursoft.xml.io.write.processinginstructions;/*-
  * ========================LICENSE_START=================================
  * navigation-extender-runtime
  * %%
@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,24 +23,40 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.xml.io.write.comments;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.Marshaller.Listener;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-/**
- * with comments the formatting doesn't work, this adds the formatting back.
- */
-public class CommentAwareXMLStreamWriter extends com.sun.xml.txw2.output.IndentingXMLStreamWriter {
+public class ProcessingInstructionAdderListener extends Listener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessingInstructionAdderListener.class);
+    private final XMLStreamWriter xsw;
+    private final ProcessingInstructions processingInstructions;
 
-    public CommentAwareXMLStreamWriter(final XMLStreamWriter xmlStreamWriter) {
-        super(xmlStreamWriter);
+    /**
+     * @param xsw                    the xml stream writer
+     * @param processingInstructions list of xjc objects and comment strings
+     */
+    public ProcessingInstructionAdderListener(final XMLStreamWriter xsw, final ProcessingInstructions processingInstructions) {
+        this.xsw = xsw;
+        this.processingInstructions = processingInstructions;
     }
 
     @Override
-    public void writeComment(final String data)
-            throws XMLStreamException {
-        writeCharacters("\n"); // IndentingXMLStreamWriter uses \n
-        super.writeComment(data);
+    public void beforeMarshal(final Object source) {
+        processingInstructions.get(source).forEach(processingInstruction -> {
+            final String target = processingInstruction.getTarget();
+            final String data = processingInstruction.getData();
+
+            try {
+                xsw.writeProcessingInstruction(target, data);
+            } catch (final XMLStreamException e) {
+                LOGGER.warn("Ignored Exception while writing processingInstruction:", e);
+            }
+        });
     }
+
 }

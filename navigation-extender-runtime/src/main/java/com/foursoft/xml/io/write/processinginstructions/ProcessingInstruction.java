@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,41 +25,34 @@
  */
 package com.foursoft.xml.io.write.processinginstructions;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 /**
  * ProcessingInstruction defines an XML processing instruction
  */
 public class ProcessingInstruction {
 
     private String target;
-    private final Map<String, String> map = new HashMap<>();
+    private final String data;
 
+    public ProcessingInstruction(final String target) {
+        this(target, "");
+    }
+
+    public ProcessingInstruction(final String target, final String data) {
+        this.target = target;
+        this.data = data;
+    }
 
     public String getTarget() {
         return target;
     }
 
-    public String getData(){
-        return map.entrySet()
-                        .stream()
-                        .map(d -> String.join("=", d.getKey(), "\"" +  d.getValue()) + "\"")
-                        .collect(Collectors.joining( " "));
-    }
-
-
-    public void setTarget(String target){
+    public void setTarget(final String target) {
         this.target = target;
     }
 
-    public void put(final String target, final String dataKey, final String data) {
-        Objects.requireNonNull(target);
-        Objects.requireNonNull(dataKey);
-        Objects.requireNonNull(data);
-        this.target = target;
-        map.put(dataKey, data);
+    public String getData() {
+        return data;
     }
+
+
 }

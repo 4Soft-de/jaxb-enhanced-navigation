@@ -29,10 +29,8 @@ import com.foursoft.xml.JaxbContextFactory;
 import com.foursoft.xml.io.utils.ValidationEventLogger;
 import com.foursoft.xml.io.utils.XMLIOException;
 import com.foursoft.xml.io.write.comments.CommentAdderListener;
-import com.foursoft.xml.io.write.comments.CommentAwareXMLStreamWriter;
 import com.foursoft.xml.io.write.comments.Comments;
-import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructionAdder;
-import com.sun.xml.internal.fastinfoset.stax.events.ProcessingInstructionEvent;
+import com.foursoft.xml.io.write.processinginstructions.ProcessingInstructionAdderListener;
 
 import javax.xml.bind.*;
 import javax.xml.stream.XMLOutputFactory;
@@ -74,6 +72,17 @@ public class XMLWriter<T> {
         }
     }
 
+    private static void addEventHandler(final Marshaller marshaller,
+                                        final Consumer<ValidationEvent> validationEventConsumer)
+            throws JAXBException {
+        final ValidationEventHandler eventHandler = marshaller.getEventHandler();
+        marshaller.setEventHandler(event -> {
+            validationEventConsumer.accept(event);
+            return eventHandler.handleEvent(event);
+        });
+
+    }
+
     /**
      * write the JAXB model to an output stream
      *
@@ -89,7 +98,7 @@ public class XMLWriter<T> {
      *
      * @param container    the jaxb model to deserialize into the given stream
      * @param outputStream the output to write to
-     * @param meta     additional meta information which should be added to output {@link Meta}
+     * @param meta         additional meta information which should be added to output {@link Meta}
      */
     public void write(final T container, final Meta meta, final OutputStream outputStream) {
         write(container, meta, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
@@ -143,26 +152,17 @@ public class XMLWriter<T> {
         }
     }
 
-    private static void addEventHandler(final Marshaller marshaller,
-                                        final Consumer<ValidationEvent> validationEventConsumer)
-            throws JAXBException {
-        final ValidationEventHandler eventHandler = marshaller.getEventHandler();
-        marshaller.setEventHandler(event -> {
-            validationEventConsumer.accept(event);
-            return eventHandler.handleEvent(event);
-        });
-
-    }
-
     private void write(final T container, final Meta meta, final Writer output) {
         final XMLOutputFactory xof = XMLOutputFactory.newFactory();
         try {
             final XMLStreamWriter xmlStreamWriter = xof.createXMLStreamWriter(output);
-            final ProcessingInstructionAdder processingInstructionAdder = new ProcessingInstructionAdder(xmlStreamWriter, meta.getProcessingInstructions());
-            processingInstructionAdder.beforeMarshal();
+            final MetaAwareXMLStreamWriter xsw = new MetaAwareXMLStreamWriter(xmlStreamWriter);
 
-            final CommentAwareXMLStreamWriter xsw = new CommentAwareXMLStreamWriter(xmlStreamWriter);
-            meta.getComments().ifPresent(c -> marshaller.setListener(new CommentAdderListener(xsw, c)));
+            final MarshallerListener marshallerListener = new MarshallerListener();
+            marshaller.setListener(marshallerListener);
+            meta.getComments().ifPresent(c -> marshallerListener.addListener(new CommentAdderListener(xsw, c)));
+            meta.getProcessingInstructions()
+                    .ifPresent(c -> marshallerListener.addListener(new ProcessingInstructionAdderListener(xmlStreamWriter, c)));
 
             marshaller.marshal(container, xsw);
             xsw.close();
