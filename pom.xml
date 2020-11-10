@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.foursoft.jaxb2</groupId>
         <artifactId>jaxb-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <groupId>com.foursoft.jaxb2</groupId>
@@ -29,7 +29,7 @@
         <!-- Plugins -->
 
         <maven-jaxb2-plugin.version>0.14.0</maven-jaxb2-plugin.version>
-        
+
         <!-- build & release properties -->
         <sonar.projectKey>4Soft-de_jaxb-enhanced-navigation</sonar.projectKey>
 
