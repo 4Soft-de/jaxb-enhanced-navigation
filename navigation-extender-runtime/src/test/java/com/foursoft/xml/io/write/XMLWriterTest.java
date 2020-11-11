@@ -124,6 +124,7 @@ class XMLWriterTest {
             final String result = byteOutputStream.toString();
             assertFalse(validationEventCollector.hasEvents(), "Should produce no errors!");
             Assertions.assertThat(result).contains(expectedComment);
+            Assertions.assertThat(result).contains(processingInstruction.getData());
         }
     }
 
