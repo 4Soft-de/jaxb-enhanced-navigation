@@ -113,6 +113,8 @@ public class XMLWriter<T> {
      * @param container    the jaxb model to deserialize into the given stream
      * @param outputStream the output to write to
      * @param comments     additional comments which should be added to output {@link Comments}
+     *
+     * @deprecated Use {@link #write(T, XMLMeta, OutputStream)} and {@link XMLMeta#setComments(Comments)} instead.
      */
     @Deprecated
     public void write(final T container, final Comments comments, final OutputStream outputStream) {
@@ -127,6 +129,8 @@ public class XMLWriter<T> {
      * @param container the jaxb model to deserialize into the given stream
      * @param comments  additional comments which should be added to output {@link Comments}
      * @return the model as xml string
+     *
+     * @deprecated Use {@link #writeToString(T, XMLMeta)} and {@link XMLMeta#setComments(Comments)} instead.
      */
     @Deprecated
     public String writeToString(final T container, final Comments comments) {
