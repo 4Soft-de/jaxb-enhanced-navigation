@@ -136,12 +136,7 @@ public class XMLWriter<T> {
     public String writeToString(final T container, final Comments comments) {
         final XMLMeta meta = new XMLMeta();
         meta.setComments(comments);
-        try (final StringWriter stringWriter = new StringWriter()) {
-            write(container, meta, stringWriter);
-            return stringWriter.toString();
-        } catch (final Exception e) {
-            throw new XMLIOException("Error serializing objects to XML.", e);
-        }
+        return writeToString(container, meta);
     }
 
     /**
@@ -151,12 +146,9 @@ public class XMLWriter<T> {
      * @return the model as xml string
      */
     public String writeToString(final T container) {
-        try (final StringWriter stringWriter = new StringWriter()) {
-            write(container, stringWriter);
-            return stringWriter.toString();
-        } catch (final IOException e) {
-            throw new XMLIOException("Error serializing objects to XML", e);
-        }
+        final StringWriter stringWriter = new StringWriter();
+        write(container, stringWriter);
+        return stringWriter.toString();
     }
 
     /**
@@ -167,12 +159,9 @@ public class XMLWriter<T> {
      * @return the model as xml string
      */
     public String writeToString(final T container, final XMLMeta meta) {
-        try (final StringWriter stringWriter = new StringWriter()) {
-            write(container, meta, stringWriter);
-            return stringWriter.toString();
-        } catch (final IOException e) {
-            throw new XMLIOException("Error serializing objects to XML", e);
-        }
+        final StringWriter stringWriter = new StringWriter();
+        write(container, meta, stringWriter);
+        return stringWriter.toString();
     }
 
     private void write(final T container, final XMLMeta meta, final Writer output) {
