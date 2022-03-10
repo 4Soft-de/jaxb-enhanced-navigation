@@ -1,8 +1,8 @@
 /*-
  * ========================LICENSE_START=================================
- * navigation-extender-runtime
+ * navext-runtime
  * %%
- * Copyright (C) 2019 - 2020 4Soft GmbH
+ * Copyright (C) 2019 - 2022 4Soft GmbH
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -10,10 +10,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,43 +23,27 @@
  * THE SOFTWARE.
  * =========================LICENSE_END==================================
  */
-package com.foursoft.jaxb.navext.runtime.model;
+package com.foursoft.jaxb.navext.runtime.io.write.id;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
+import com.foursoft.jaxb.navext.runtime.io.TestData;
+import com.foursoft.jaxb.navext.runtime.model.Root;
+import org.junit.jupiter.api.Test;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractBase", propOrder = {})
-@XmlSeeAlso({Root.class, ChildA.class, ChildB.class})
-public abstract class AbstractBase implements Serializable, Identifiable, ModifiableIdentifiable {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final static long serialVersionUID = 1L;
-    @XmlAttribute(name = "id", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlID
-    @XmlSchemaType(name = "ID")
-    protected String xmlId;
+class IdGeneratorTest {
 
-    /**
-     * Ruft den Wert der xmlId-Eigenschaft ab.
-     *
-     * @return possible object is {@link String }
-     */
-    @Override
-    public String getXmlId() {
-        return xmlId;
+    @Test
+    void testSetXmlId() {
+        final IdGenerator idGenerator = new SimpleIdGenerator.Builder()
+                .withDelimiter("_")
+                .withRemovePrefix(0)
+                .build();
+
+        final Root root = TestData.readBasicTest();
+        idGenerator.setXmlId(root);
+
+        assertThat(root).satisfies(c -> assertThat(c.getXmlId()).isEqualTo("root_1"));
     }
 
-
-    @Override
-    public void setXmlId(final String value) {
-        xmlId = value;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + getXmlId() + "]";
-    }
 }
