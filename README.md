@@ -6,6 +6,10 @@
 A library for enhanced navigations for JAXB models. It consists of two parts: An xjc-plugin (compile time) and a runtime
 component.
 
+## Project Archiving / Migration
+
+**This and other XML projects were migrated into https://github.com/4Soft-de/harness-model. Please update your project to use the new project and open Issues / PRs there.**
+
 ## Key Features are:
 
 - Typesafe Idref-Relations (also Idrefs). The type can be defined as an abstract type if required
